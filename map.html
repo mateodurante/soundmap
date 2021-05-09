@@ -1,0 +1,81 @@
+<html>
+<head>
+    <!-- Libreria de LEAFLET -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+    integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+    crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+    integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+    crossorigin=""></script>
+    <script src="https://npmcdn.com/leaflet-geometryutil"></script>
+    <!-- / Libreria de LEAFLET -->
+
+    <!-- Libreria de SONIDO https://www.createjs.com/getting-started/soundjs -->
+    <script src="https://code.createjs.com/1.0.0/soundjs.min.js"></script>
+    <!-- / Libreria de SONIDO -->
+
+    <link rel="stylesheet" href="map.css">
+
+</head>
+<body>
+
+    <h1 class="title"> Viaja con sonidos</h1>
+
+    <div id="mapid"></div>
+
+    <script>
+        var point_jakob = [-41.18663646663345, -71.56096067283967];
+        var instance = null;
+
+        createjs.Sound.registerSound("data/sounds/rio.wav", "Rio");
+        
+        function playSound () {
+            instance = createjs.Sound.play("Rio", {loop:-1});
+            instance.volume = 0.5;
+        }
+
+        function stopSound () {
+            createjs.Sound.stop("Rio");
+        }
+
+        var mymap = L.map('mapid').setView(point_jakob, 13);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(mymap);
+
+        var greenIcon = L.icon({
+            iconUrl: 'data/img/sound-icon.png',
+            //shadowUrl: 'leaf-shadow.png',
+
+            iconSize:     [50, 50], // size of the icon
+            //shadowSize:   [50, 64], // size of the shadow
+            iconAnchor:   [22, 94], // point of the icon which will correspond to marker's location
+            //shadowAnchor: [4, 62],  // the same for the shadow
+            popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+        });
+
+        L.marker(point_jakob, {icon: greenIcon}).addTo(mymap)
+            .bindPopup('Refugio Jakob<br><button onclick="playSound();">Escuchar</button><br><button onclick="stopSound();">Pausar</button>')
+            .openPopup();
+
+        function getDistance(from, to)
+        {
+            var container = document.getElementById('distance');
+            container.innerHTML = ("New Delhi to Mumbai - " + (from.distanceTo(to)).toFixed(0)/1000) + ' km';
+        }
+
+        mymap.on("move", function (e) {
+            var distance = mymap.getCenter().distanceTo(point_jakob);
+            var distance_range = 9999;
+            // console.log(distance);
+            // console.log(e);
+            if (instance) {
+                instance.volume = (distance_range-distance)/distance_range;
+            }
+
+            });
+    </script>
+
+</body>
+</html>

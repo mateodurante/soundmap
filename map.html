@@ -19,63 +19,17 @@
 </head>
 <body>
 
-    <h1 class="title"> Viaja con sonidos</h1>
+    <h1 class="center"> Viaja con sonidos</h1>
 
     <div id="mapid"></div>
 
-    <script>
-        var point_jakob = [-41.18663646663345, -71.56096067283967];
-        var instance = null;
+    <script src="sounds.js"></script>
+    <script src="leaflet.js"></script>
+    <script src="map.js"></script>
 
-        createjs.Sound.registerSound("data/sounds/rio.wav", "Rio");
-        
-        function playSound () {
-            instance = createjs.Sound.play("Rio", {loop:-1});
-            instance.volume = 0.5;
-        }
-
-        function stopSound () {
-            createjs.Sound.stop("Rio");
-        }
-
-        var mymap = L.map('mapid').setView(point_jakob, 13);
-
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(mymap);
-
-        var greenIcon = L.icon({
-            iconUrl: 'data/img/sound-icon.png',
-            //shadowUrl: 'leaf-shadow.png',
-
-            iconSize:     [50, 50], // size of the icon
-            //shadowSize:   [50, 64], // size of the shadow
-            iconAnchor:   [22, 94], // point of the icon which will correspond to marker's location
-            //shadowAnchor: [4, 62],  // the same for the shadow
-            popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
-        });
-
-        L.marker(point_jakob, {icon: greenIcon}).addTo(mymap)
-            .bindPopup('Refugio Jakob<br><button onclick="playSound();">Escuchar</button><br><button onclick="stopSound();">Pausar</button>')
-            .openPopup();
-
-        function getDistance(from, to)
-        {
-            var container = document.getElementById('distance');
-            container.innerHTML = ("New Delhi to Mumbai - " + (from.distanceTo(to)).toFixed(0)/1000) + ' km';
-        }
-
-        mymap.on("move", function (e) {
-            var distance = mymap.getCenter().distanceTo(point_jakob);
-            var distance_range = 9999;
-            // console.log(distance);
-            // console.log(e);
-            if (instance) {
-                instance.volume = (distance_range-distance)/distance_range;
-            }
-
-            });
-    </script>
+    <div class="center">
+        <button onclick="nextPoint()">Siguiente punto</button>
+    </div>
 
 </body>
 </html>
